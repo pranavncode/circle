@@ -157,72 +157,150 @@ const HomePage: React.FC<HomePageProps> = ({ userData }) => {
     }
   };
 
+  const cardStyle: React.CSSProperties = {
+    background: '#fff',
+    borderRadius: '16px',
+    border: '1px solid #e7e5e4',
+    overflow: 'hidden',
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    borderRadius: '12px',
+    border: '1.5px solid #e7e5e4',
+    background: '#fafaf9',
+    padding: '12px 16px',
+    fontSize: '14px',
+    outline: 'none',
+    fontFamily: 'Inter, system-ui, sans-serif',
+    color: '#1c1917',
+    transition: 'border-color 0.2s ease',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '13px',
+    fontWeight: 500,
+    color: '#44403c',
+    marginBottom: '6px',
+  };
+
+  const btnPrimary: React.CSSProperties = {
+    background: '#1c1917',
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: '13px',
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    fontFamily: 'Inter, system-ui, sans-serif',
+    transition: 'background 0.2s ease',
+  };
+
+  const btnOutline: React.CSSProperties = {
+    background: 'transparent',
+    color: '#44403c',
+    fontWeight: 500,
+    fontSize: '13px',
+    padding: '10px 20px',
+    border: '1.5px solid #e7e5e4',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    fontFamily: 'Inter, system-ui, sans-serif',
+    transition: 'border-color 0.2s ease',
+  };
+
   return (
-    <div className="space-y-6 pb-28">
-      <section className="rounded-3xl border border-orange-200 bg-white/80 backdrop-blur p-5 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', paddingBottom: '100px' }}>
+
+      {/* Quick links */}
+      <div style={{ ...cardStyle, padding: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
           <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-orange-500 font-semibold">Home</p>
-            <h2 className="text-2xl font-bold text-slate-900">Your posts</h2>
+            <p style={{ fontSize: '11px', fontWeight: 600, color: '#a8a29e', letterSpacing: '0.16em', textTransform: 'uppercase' }}>Feed</p>
+            <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#1c1917', letterSpacing: '-0.02em', marginTop: '2px' }}>Your posts</h2>
           </div>
-          <button onClick={fetchPosts} className="text-orange-600 font-semibold hover:text-orange-700 transition">Refresh</button>
+          <button onClick={fetchPosts} style={{ ...btnOutline, padding: '8px 16px', fontSize: '12px' }}>Refresh</button>
         </div>
-        <div className="flex gap-3 overflow-x-auto py-2">
-          {['Stories', 'Trends', 'People', 'Events', 'Jobs'].map((story) => (
-            <div key={story} className="min-w-[100px] rounded-3xl border border-gray-200 bg-orange-50/80 p-4 text-center">
-              <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100 text-orange-600 font-bold text-lg">{story.charAt(0)}</div>
-              <p className="text-xs font-semibold text-slate-700">{story}</p>
+        <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', padding: '4px 0' }}>
+          {['Stories', 'Trends', 'People', 'Events', 'Jobs'].map((label) => (
+            <div key={label} style={{
+              minWidth: '80px',
+              borderRadius: '12px',
+              border: '1px solid #e7e5e4',
+              padding: '14px 12px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'border-color 0.2s ease, background 0.2s ease',
+            }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: '#fafaf9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 8px',
+                fontSize: '16px',
+                fontWeight: 700,
+                color: '#1c1917',
+              }}>
+                {label.charAt(0)}
+              </div>
+              <p style={{ fontSize: '11px', fontWeight: 500, color: '#78716c' }}>{label}</p>
             </div>
           ))}
         </div>
-      </section>
+      </div>
 
-      <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-        <h3 className="text-xl font-semibold text-slate-900">Create a new post</h3>
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+      {/* Create post */}
+      <div style={{ ...cardStyle, padding: '24px' }}>
+        <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917', marginBottom: '16px', letterSpacing: '-0.01em' }}>New post</h3>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Title</label>
+            <label style={labelStyle}>Title</label>
             <input
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-100"
+              style={inputStyle}
               placeholder="What are you working on?"
             />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Caption</label>
+            <label style={labelStyle}>Caption</label>
             <textarea
               value={caption}
               onChange={(event) => setCaption(event.target.value)}
-              className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-100"
-              rows={4}
-              placeholder="Share your progress, ideas or work updates"
+              style={{ ...inputStyle, resize: 'vertical', minHeight: '80px' }}
+              rows={3}
+              placeholder="Share your progress, ideas or updates"
             />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Photo</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} className="w-full" />
+            <label style={labelStyle}>Photo</label>
+            <input type="file" accept="image/*" onChange={handleImageChange} style={{ fontSize: '13px', color: '#78716c' }} />
             {imagePreview && (
-              <img src={imagePreview} alt="Preview" className="mt-3 max-h-48 w-full rounded-3xl object-cover" />
+              <img src={imagePreview} alt="Preview" style={{ marginTop: '12px', maxHeight: '180px', width: '100%', objectFit: 'cover', borderRadius: '12px' }} />
             )}
           </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
-          <button
-            type="submit"
-            disabled={saving}
-            className="rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-orange-600 transition disabled:opacity-60"
-          >
-            {saving ? 'Publishing...' : 'Publish Post'}
-          </button>
+          {error && <p style={{ fontSize: '13px', color: '#dc2626' }}>{error}</p>}
+          <div>
+            <button type="submit" disabled={saving} style={{ ...btnPrimary, opacity: saving ? 0.5 : 1 }}>
+              {saving ? 'Publishing...' : 'Publish'}
+            </button>
+          </div>
         </form>
-      </section>
+      </div>
 
+      {/* Posts feed */}
       {loading ? (
-        <div className="rounded-3xl bg-white p-10 text-center text-slate-500 shadow-sm border border-slate-200">Loading your posts...</div>
+        <div style={{ ...cardStyle, padding: '40px', textAlign: 'center', color: '#78716c', fontSize: '14px' }}>Loading your posts...</div>
       ) : posts.length === 0 ? (
-        <div className="rounded-3xl bg-white p-10 text-center text-slate-500 shadow-sm border border-slate-200">
-          <p className="text-lg font-semibold text-slate-900">No posts yet</p>
-          <p className="mt-2 text-sm text-slate-600">Create your first post to appear on your personal feed.</p>
+        <div style={{ ...cardStyle, padding: '40px', textAlign: 'center' }}>
+          <p style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917' }}>No posts yet</p>
+          <p style={{ fontSize: '13px', color: '#78716c', marginTop: '6px' }}>Create your first post to appear on your feed.</p>
         </div>
       ) : (
         posts.map((post) => {
@@ -230,61 +308,63 @@ const HomePage: React.FC<HomePageProps> = ({ userData }) => {
           const isEditing = editingPostId === post.id;
 
           return (
-            <article key={post.id ?? `${post.createdAt}-${post.title}`} className="rounded-3xl bg-white shadow-sm border border-slate-200 overflow-hidden">
-              <div className="p-5">
-                <div className="flex items-center justify-between gap-4 mb-4">
-                  <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-3xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white text-xl font-bold">{author.charAt(0)}</div>
+            <article key={post.id ?? `${post.createdAt}-${post.title}`} style={cardStyle}>
+              <div style={{ padding: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      background: '#1c1917',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '15px',
+                      fontWeight: 700,
+                    }}>
+                      {author.charAt(0).toUpperCase()}
+                    </div>
                     <div>
-                      <p className="text-sm font-semibold text-slate-900">{author}</p>
-                      <p className="text-xs text-slate-500">{new Date(post.createdAt).toLocaleString()}</p>
+                      <p style={{ fontSize: '14px', fontWeight: 600, color: '#1c1917' }}>{author}</p>
+                      <p style={{ fontSize: '11px', color: '#a8a29e' }}>{new Date(post.createdAt).toLocaleString()}</p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => startEdit(post)} className="rounded-full border border-slate-200 px-4 py-2 text-slate-700 hover:border-orange-300 transition">Edit</button>
-                    <button onClick={() => handleDelete(post.id)} className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-red-700 hover:bg-red-100 transition">Delete</button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button onClick={() => startEdit(post)} style={{ ...btnOutline, padding: '6px 14px', fontSize: '12px' }}>Edit</button>
+                    <button onClick={() => handleDelete(post.id)} style={{ ...btnOutline, padding: '6px 14px', fontSize: '12px', color: '#dc2626', borderColor: '#fecaca' }}>Delete</button>
                   </div>
                 </div>
 
                 {isEditing ? (
-                  <form onSubmit={handleUpdate} className="space-y-4">
+                  <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-slate-700">Title</label>
-                      <input
-                        value={editTitle}
-                        onChange={(event) => setEditTitle(event.target.value)}
-                        className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-100"
-                      />
+                      <label style={labelStyle}>Title</label>
+                      <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} style={inputStyle} />
                     </div>
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-slate-700">Caption</label>
-                      <textarea
-                        value={editCaption}
-                        onChange={(event) => setEditCaption(event.target.value)}
-                        className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-100"
-                        rows={3}
-                      />
+                      <label style={labelStyle}>Caption</label>
+                      <textarea value={editCaption} onChange={(e) => setEditCaption(e.target.value)} style={{ ...inputStyle, resize: 'vertical' }} rows={3} />
                     </div>
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-slate-700">Replace photo</label>
-                      <input type="file" accept="image/*" onChange={handleEditImageChange} className="w-full" />
+                      <label style={labelStyle}>Replace photo</label>
+                      <input type="file" accept="image/*" onChange={handleEditImageChange} style={{ fontSize: '13px', color: '#78716c' }} />
                       {editImagePreview && (
-                        <img src={editImagePreview} alt="Preview" className="mt-3 max-h-48 w-full rounded-3xl object-cover" />
+                        <img src={editImagePreview} alt="Preview" style={{ marginTop: '12px', maxHeight: '180px', width: '100%', objectFit: 'cover', borderRadius: '12px' }} />
                       )}
                     </div>
-                    {error && <p className="text-sm text-red-500">{error}</p>}
-                    <div className="flex gap-3">
-                      <button type="submit" className="rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-orange-600 transition">Save</button>
-                      <button type="button" onClick={cancelEdit} className="rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 hover:border-slate-400 transition">Cancel</button>
+                    {error && <p style={{ fontSize: '13px', color: '#dc2626' }}>{error}</p>}
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button type="submit" style={btnPrimary}>Save</button>
+                      <button type="button" onClick={cancelEdit} style={btnOutline}>Cancel</button>
                     </div>
                   </form>
                 ) : (
                   <>
-                    {post.imageUrl && <img src={post.imageUrl} alt={post.title} className="w-full max-h-96 object-cover" />}
-                    <div className="px-0 pb-5 pt-4">
-                      <h3 className="mb-3 text-xl font-semibold text-slate-900">{post.title}</h3>
-                      <p className="text-sm leading-6 text-slate-600">{post.caption}</p>
-                    </div>
+                    {post.imageUrl && <img src={post.imageUrl} alt={post.title} style={{ width: '100%', maxHeight: '360px', objectFit: 'cover', borderRadius: '12px', marginBottom: '14px' }} />}
+                    <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917', marginBottom: '6px', letterSpacing: '-0.01em' }}>{post.title}</h3>
+                    <p style={{ fontSize: '14px', lineHeight: 1.6, color: '#57534e' }}>{post.caption}</p>
                   </>
                 )}
               </div>

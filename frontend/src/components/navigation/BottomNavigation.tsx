@@ -10,25 +10,64 @@ interface BottomNavigationProps {
 const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeTab, onTabChange }) => {
   const navItems: NavItem[] = [
     { id: 'home', label: 'Home', icon: 'home' },
-    { id: 'profile', label: 'Profile', icon: 'user' },
-    { id: 'notifications', label: 'Alerts', icon: 'bell' },
-    { id: 'messages', label: 'Messages', icon: 'chat' },
     { id: 'search', label: 'Search', icon: 'search' },
+    { id: 'notifications', label: 'Alerts', icon: 'bell' },
+    { id: 'messages', label: 'Chat', icon: 'chat' },
+    { id: 'profile', label: 'Profile', icon: 'user' },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/95 backdrop-blur z-30">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
+    <nav style={{
+      position: 'fixed',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      borderTop: '1px solid #e7e5e4',
+      background: 'rgba(255,255,255,0.92)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
+      zIndex: 30,
+    }}>
+      <div style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '8px 16px 12px' }}>
         {navItems.map((item) => {
           const active = activeTab === item.id;
           return (
             <button
               key={item.id}
               onClick={() => onTabChange(item.id)}
-              className="flex flex-col items-center gap-1 text-[11px] font-semibold transition"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '6px 12px',
+                borderRadius: '12px',
+                transition: 'background 0.2s ease',
+              }}
             >
               <Icon name={item.icon} active={active} />
-              <span className={active ? 'text-orange-600' : 'text-slate-500'}>{item.label}</span>
+              <span style={{
+                fontSize: '10px',
+                fontWeight: active ? 600 : 500,
+                color: active ? '#1c1917' : '#a8a29e',
+                letterSpacing: '0.02em',
+                transition: 'color 0.2s ease',
+                fontFamily: 'Inter, system-ui, sans-serif',
+              }}>
+                {item.label}
+              </span>
+              {active && (
+                <div style={{
+                  width: '4px',
+                  height: '4px',
+                  borderRadius: '50%',
+                  background: '#e85d04',
+                  marginTop: '-2px',
+                }} />
+              )}
             </button>
           );
         })}

@@ -77,239 +77,309 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userData, onLogout, onProfile
     }
   };
 
+  const cardStyle: React.CSSProperties = {
+    background: '#fff',
+    borderRadius: '16px',
+    border: '1px solid #e7e5e4',
+    overflow: 'hidden',
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    borderRadius: '12px',
+    border: '1.5px solid #e7e5e4',
+    background: '#fafaf9',
+    padding: '12px 16px',
+    fontSize: '14px',
+    outline: 'none',
+    fontFamily: 'Inter, system-ui, sans-serif',
+    color: '#1c1917',
+    transition: 'border-color 0.2s ease',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '13px',
+    fontWeight: 500,
+    color: '#44403c',
+    marginBottom: '6px',
+  };
+
+  const btnPrimary: React.CSSProperties = {
+    background: '#1c1917',
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: '13px',
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    fontFamily: 'Inter, system-ui, sans-serif',
+    transition: 'background 0.2s ease',
+  };
+
+  const btnOutline: React.CSSProperties = {
+    background: 'transparent',
+    color: '#44403c',
+    fontWeight: 500,
+    fontSize: '13px',
+    padding: '10px 20px',
+    border: '1.5px solid #e7e5e4',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    fontFamily: 'Inter, system-ui, sans-serif',
+    transition: 'border-color 0.2s ease',
+  };
+
   return (
-    <div className="space-y-6 pb-28">
-      <section className="rounded-[2rem] overflow-hidden shadow-lg">
-        <div className="h-48 bg-gradient-to-r from-orange-400 via-orange-500 to-red-500" />
-        <div className="bg-white px-6 pb-6 pt-4">
-          <div className="-mt-16 flex items-end gap-5">
-            <div className="h-32 w-32 rounded-[2rem] border-4 border-white bg-slate-100 shadow-lg flex items-center justify-center text-4xl font-bold text-orange-600">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingBottom: '100px' }}>
+
+      {/* Profile header */}
+      <div style={cardStyle}>
+        <div style={{ height: '120px', background: '#f3ede9ff' }} />
+        <div style={{ padding: '0 24px 24px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px', marginTop: '-40px' }}>
+            <div style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              border: '4px solid #fff',
+              background: '#fafaf9',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '28px',
+              fontWeight: 800,
+              color: '#1c1917',
+              flexShrink: 0,
+            }}>
               {userData.username.charAt(0).toUpperCase()}
             </div>
-            <div className="grow">
-              <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-3xl font-bold text-slate-900">{userData.username}</h1>
-                <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-orange-600">Student</span>
+            <div style={{ flex: 1, paddingBottom: '4px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1c1917', letterSpacing: '-0.02em' }}>{userData.username}</h1>
+                <span style={{
+                  fontSize: '10px',
+                  fontWeight: 600,
+                  color: '#e85d04',
+                  background: '#fef0e6',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                }}>Student</span>
               </div>
-              <p className="mt-2 text-sm text-slate-500">{userData.email}</p>
-              <p className="mt-1 text-sm text-slate-500">Member since {new Date(userData.createdAt).toLocaleDateString()}</p>
-            </div>
-            <div className="flex flex-col gap-3">
-              <button onClick={onLogout} className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-slate-800">
-                Log out
-              </button>
-              <button onClick={() => setIsEditing((current) => !current)} className="rounded-full border border-orange-200 bg-white px-5 py-3 text-sm font-semibold text-orange-600 shadow-sm hover:border-orange-300 transition">
-                {isEditing ? 'Close edit' : 'Edit profile'}
-              </button>
+              <p style={{ fontSize: '13px', color: '#a8a29e', marginTop: '2px' }}>{userData.email}</p>
             </div>
           </div>
-        </div>
-      </section>
 
-      {isEditing ? (
-        <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-          <h2 className="text-xl font-semibold text-slate-900">Edit profile</h2>
-          <form onSubmit={handleSave} className="mt-6 space-y-5">
-            <div className="grid gap-4 lg:grid-cols-2">
+          <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+            <button onClick={() => setIsEditing((current) => !current)} style={btnOutline}>
+              {isEditing ? 'Cancel edit' : 'Edit profile'}
+            </button>
+            <button onClick={onLogout} style={{ ...btnOutline, color: '#dc2626', borderColor: '#fecaca' }}>
+              Log out
+            </button>
+          </div>
+
+          <p style={{ fontSize: '12px', color: '#a8a29e', marginTop: '12px' }}>
+            Member since {new Date(userData.createdAt).toLocaleDateString()}
+          </p>
+        </div>
+      </div>
+
+      {/* Edit form */}
+      {isEditing && (
+        <div style={{ ...cardStyle, padding: '24px' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917', marginBottom: '16px', letterSpacing: '-0.01em' }}>Edit profile</h2>
+          <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Username</label>
-                <input
-                  value={formValues.username}
-                  onChange={(event) => handleInputChange('username', event.target.value)}
-                  className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-100"
-                />
+                <label style={labelStyle}>Username</label>
+                <input value={formValues.username} onChange={(e) => handleInputChange('username', e.target.value)} style={inputStyle} />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Email</label>
-                <input
-                  value={userData.email}
-                  disabled
-                  className="w-full cursor-not-allowed rounded-3xl border border-slate-200 bg-slate-100 px-4 py-3 text-slate-500"
-                />
+                <label style={labelStyle}>Email</label>
+                <input value={userData.email} disabled style={{ ...inputStyle, opacity: 0.5, cursor: 'not-allowed' }} />
               </div>
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">About</label>
+              <label style={labelStyle}>About</label>
               <textarea
                 value={formValues.about}
-                onChange={(event) => handleInputChange('about', event.target.value)}
-                rows={4}
-                className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-100"
-                placeholder="Share what you do, what you care about, and what you want to build."
+                onChange={(e) => handleInputChange('about', e.target.value)}
+                rows={3}
+                style={{ ...inputStyle, resize: 'vertical' }}
+                placeholder="What do you do? What drives you?"
               />
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Skills</label>
-                <input
-                  value={formValues.skills}
-                  onChange={(event) => handleInputChange('skills', event.target.value)}
-                  className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-100"
-                  placeholder="e.g. Design, AI, Leadership"
-                />
-                <p className="mt-2 text-xs text-slate-500">Separate values with commas.</p>
+                <label style={labelStyle}>Skills</label>
+                <input value={formValues.skills} onChange={(e) => handleInputChange('skills', e.target.value)} style={inputStyle} placeholder="Design, AI, Leadership" />
+                <p style={{ fontSize: '11px', color: '#a8a29e', marginTop: '4px' }}>Comma separated</p>
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Interests</label>
-                <input
-                  value={formValues.interests}
-                  onChange={(event) => handleInputChange('interests', event.target.value)}
-                  className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-100"
-                  placeholder="e.g. Community, Startups, Mentoring"
-                />
-                <p className="mt-2 text-xs text-slate-500">Use commas to separate interests.</p>
+                <label style={labelStyle}>Interests</label>
+                <input value={formValues.interests} onChange={(e) => handleInputChange('interests', e.target.value)} style={inputStyle} placeholder="Community, Startups" />
+                <p style={{ fontSize: '11px', color: '#a8a29e', marginTop: '4px' }}>Comma separated</p>
               </div>
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Experience</label>
+              <label style={labelStyle}>Experience</label>
               <textarea
                 value={formValues.experience}
-                onChange={(event) => handleInputChange('experience', event.target.value)}
-                rows={4}
-                className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-100"
-                placeholder="Describe your recent experience, roles, or projects."
+                onChange={(e) => handleInputChange('experience', e.target.value)}
+                rows={3}
+                style={{ ...inputStyle, resize: 'vertical' }}
+                placeholder="Roles, projects, or achievements"
               />
             </div>
 
-            {error && <p className="text-sm text-red-500">{error}</p>}
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="submit"
-                disabled={saving}
-                className="rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-orange-600 transition disabled:opacity-60"
-              >
+            {error && <p style={{ fontSize: '13px', color: '#dc2626' }}>{error}</p>}
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button type="submit" disabled={saving} style={{ ...btnPrimary, opacity: saving ? 0.5 : 1 }}>
                 {saving ? 'Saving...' : 'Save changes'}
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setFormValues({
-                    username: userData.username,
-                    about: userData.about || '',
-                    skills: userData.skills || '',
-                    interests: userData.interests || '',
-                    experience: userData.experience || '',
-                  });
-                  setIsEditing(false);
-                  setError('');
-                }}
-                className="rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 hover:border-slate-400 transition"
-              >
+              <button type="button" onClick={() => { setIsEditing(false); setError(''); }} style={btnOutline}>
                 Cancel
               </button>
             </div>
           </form>
-        </section>
-      ) : null}
+        </div>
+      )}
 
-      <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-900">About</h2>
-          <button onClick={() => setIsEditing(true)} className="rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-100 transition">
-            Edit
-          </button>
+      {/* About */}
+      <div style={{ ...cardStyle, padding: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917' }}>About</h2>
+          {!isEditing && (
+            <button onClick={() => setIsEditing(true)} style={{ ...btnOutline, padding: '6px 14px', fontSize: '12px' }}>Edit</button>
+          )}
         </div>
         {userData.about ? (
-          <p className="mt-3 text-sm leading-7 text-slate-600">{userData.about}</p>
+          <p style={{ fontSize: '14px', lineHeight: 1.7, color: '#57534e' }}>{userData.about}</p>
         ) : (
-          <p className="mt-3 text-sm text-slate-500">No about information added yet.</p>
+          <p style={{ fontSize: '13px', color: '#a8a29e' }}>No about information added yet.</p>
         )}
-      </section>
+      </div>
 
-      <section className="grid gap-6 xl:grid-cols-[1fr_0.95fr]">
-        <div className="space-y-6">
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-slate-900">Experience</h2>
-              <span className="text-xs text-slate-500">Updated</span>
-            </div>
-            {userData.experience ? (
-              <div className="mt-5 rounded-3xl border border-slate-200 p-4">
-                <p className="text-sm font-semibold text-slate-900">Profile experience</p>
-                <p className="mt-3 text-sm text-slate-600">{userData.experience}</p>
-              </div>
-            ) : (
-              <p className="mt-5 text-sm text-slate-500">No experience details added yet.</p>
+      {/* Experience & Skills */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        <div style={{ ...cardStyle, padding: '24px' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917', marginBottom: '12px' }}>Experience</h2>
+          {userData.experience ? (
+            <p style={{ fontSize: '14px', lineHeight: 1.7, color: '#57534e' }}>{userData.experience}</p>
+          ) : (
+            <p style={{ fontSize: '13px', color: '#a8a29e' }}>No experience added yet.</p>
+          )}
+        </div>
+
+        <div style={{ ...cardStyle, padding: '24px' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917', marginBottom: '12px' }}>Skills & Interests</h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {userData.skills && userData.skills.split(',').map((s) => s.trim()).filter(Boolean).map((skill) => (
+              <span key={`s-${skill}`} style={{
+                fontSize: '12px',
+                fontWeight: 500,
+                color: '#44403c',
+                background: '#fafaf9',
+                border: '1px solid #e7e5e4',
+                padding: '4px 12px',
+                borderRadius: '8px',
+              }}>{skill}</span>
+            ))}
+            {userData.interests && userData.interests.split(',').map((i) => i.trim()).filter(Boolean).map((interest) => (
+              <span key={`i-${interest}`} style={{
+                fontSize: '12px',
+                fontWeight: 500,
+                color: '#44403c',
+                background: '#fafaf9',
+                border: '1px solid #e7e5e4',
+                padding: '4px 12px',
+                borderRadius: '8px',
+              }}>{interest}</span>
+            ))}
+            {(!userData.skills || !userData.skills.split(',').some(s => s.trim())) &&
+             (!userData.interests || !userData.interests.split(',').some(i => i.trim())) && (
+              <span style={{ fontSize: '13px', color: '#a8a29e' }}>No skills or interests added yet.</span>
             )}
           </div>
         </div>
+      </div>
 
-        <div className="space-y-6">
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-            <h2 className="text-xl font-semibold text-slate-900">Skills & Interests</h2>
-            <div className="mt-4 flex flex-wrap gap-3">
-              {userData.skills && userData.skills.split(',').map((skill) => skill.trim()).filter(Boolean).map((skill) => (
-                <span key={`skill-${skill}`} className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-700">{skill}</span>
-              ))}
-              {userData.interests && userData.interests.split(',').map((interest) => interest.trim()).filter(Boolean).map((interest) => (
-                <span key={`interest-${interest}`} className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-700">{interest}</span>
-              ))}
-              {(!userData.skills || userData.skills.split(',').filter(s => s.trim()).length === 0) && 
-               (!userData.interests || userData.interests.split(',').filter(i => i.trim()).length === 0) && (
-                <span className="text-sm text-slate-500">No skills or interests added yet.</span>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-slate-900">My Posts</h2>
-          <span className="text-sm text-slate-500">{posts.length} posts</span>
+      {/* Posts */}
+      <div style={{ ...cardStyle, padding: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917' }}>Posts</h2>
+          <span style={{ fontSize: '12px', color: '#a8a29e' }}>{posts.length} posts</span>
         </div>
 
         {loadingPosts ? (
-          <p className="text-sm text-slate-500">Loading posts...</p>
+          <p style={{ fontSize: '13px', color: '#78716c' }}>Loading posts...</p>
         ) : posts.length === 0 ? (
-          <p className="text-sm text-slate-500">No posts yet. Create your first post from the home page.</p>
+          <p style={{ fontSize: '13px', color: '#a8a29e' }}>No posts yet. Create your first post from the home page.</p>
         ) : (
-          <div className="space-y-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {posts.slice(0, 5).map((post) => (
-              <article key={post.id ?? `${post.createdAt}-${post.title}`} className="rounded-3xl border border-slate-200 p-4">
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white text-sm font-bold">
+              <article key={post.id ?? `${post.createdAt}-${post.title}`} style={{ borderRadius: '12px', border: '1px solid #e7e5e4', padding: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: '#1c1917',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    flexShrink: 0,
+                  }}>
                     {userData.username.charAt(0).toUpperCase()}
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <p className="text-sm font-semibold text-slate-900">{userData.username}</p>
-                      <span className="text-xs text-slate-500">•</span>
-                      <p className="text-xs text-slate-500">{new Date(post.createdAt).toLocaleDateString()}</p>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                      <p style={{ fontSize: '13px', fontWeight: 600, color: '#1c1917' }}>{userData.username}</p>
+                      <span style={{ fontSize: '11px', color: '#a8a29e' }}>·</span>
+                      <p style={{ fontSize: '11px', color: '#a8a29e' }}>{new Date(post.createdAt).toLocaleDateString()}</p>
                     </div>
-                    <h3 className="text-sm font-semibold text-slate-900 mb-2">{post.title}</h3>
-                    <p className="text-sm text-slate-600 mb-3">{post.caption}</p>
+                    <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#1c1917', marginBottom: '4px' }}>{post.title}</h3>
+                    <p style={{ fontSize: '13px', color: '#57534e', lineHeight: 1.5 }}>{post.caption}</p>
                     {post.imageUrl && (
-                      <img src={post.imageUrl} alt={post.title} className="w-full max-h-48 object-cover rounded-3xl" />
+                      <img src={post.imageUrl} alt={post.title} style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: '10px', marginTop: '10px' }} />
                     )}
                   </div>
                 </div>
               </article>
             ))}
             {posts.length > 5 && (
-              <p className="text-sm text-slate-500 text-center">And {posts.length - 5} more posts...</p>
+              <p style={{ fontSize: '13px', color: '#a8a29e', textAlign: 'center' }}>And {posts.length - 5} more posts...</p>
             )}
           </div>
         )}
-      </section>
-      <section className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
-        <h2 className="text-xl font-semibold text-slate-900 mb-4">Network</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-slate-900">0</p>
-            <p className="text-sm text-slate-500">Followers</p>
-            <p className="text-xs text-slate-400 mt-1">Coming soon</p>
+      </div>
+
+      {/* Network */}
+      <div style={{ ...cardStyle, padding: '24px' }}>
+        <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917', marginBottom: '16px' }}>Network</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontSize: '24px', fontWeight: 700, color: '#1c1917' }}>0</p>
+            <p style={{ fontSize: '13px', color: '#78716c' }}>Followers</p>
+            <p style={{ fontSize: '11px', color: '#a8a29e', marginTop: '2px' }}>Coming soon</p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-slate-900">0</p>
-            <p className="text-sm text-slate-500">Following</p>
-            <p className="text-xs text-slate-400 mt-1">Coming soon</p>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontSize: '24px', fontWeight: 700, color: '#1c1917' }}>0</p>
+            <p style={{ fontSize: '13px', color: '#78716c' }}>Following</p>
+            <p style={{ fontSize: '11px', color: '#a8a29e', marginTop: '2px' }}>Coming soon</p>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 };

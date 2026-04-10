@@ -31,7 +31,14 @@ const Dashboard: React.FC = () => {
     localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
-  if (!userData) return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">Loading...</div>;
+  if (!userData) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fafaf9' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+        <div style={{ width: '32px', height: '32px', borderRadius: '50%', border: '3px solid #e7e5e4', borderTopColor: '#1c1917', animation: 'spin 0.8s linear infinite' }} />
+        <span style={{ fontSize: '14px', color: '#78716c' }}>Loading...</span>
+      </div>
+    </div>
+  );
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
@@ -59,15 +66,23 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-orange-50 to-gray-100 text-slate-900">
-      <div className="max-w-5xl mx-auto px-4 pb-32 sm:px-6 lg:px-8">
-        <header className="flex flex-wrap items-center border-b border-slate-200 bg-white/80 backdrop-blur py-1 px-5 rounded-3xl shadow-sm ">
-          <div>
-            <p className="text-sm uppercase tracking-[0.22em] text-orange-500 font-bold">Circle</p>
-          </div>
+    <div style={{ minHeight: '100vh', background: '#fafaf9' }}>
+      <div style={{ maxWidth: '720px', margin: '0 auto', padding: '0 20px 120px' }}>
+        <header style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '16px 0',
+          borderBottom: '1px solid #e7e5e4',
+          marginBottom: '24px',
+        }}>
+          <span style={{ fontSize: '20px', fontWeight: 900, color: '#1c1917', letterSpacing: '-0.04em' }}>Circle</span>
+          <span style={{ fontSize: '12px', fontWeight: 500, color: '#a8a29e', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            {activeTab}
+          </span>
         </header>
 
-        <main className="mt-8">
+        <main>
           {renderContent()}
         </main>
       </div>

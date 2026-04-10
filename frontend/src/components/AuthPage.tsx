@@ -34,7 +34,7 @@ const getStrength = (p: string): number => {
 };
 
 const strengthLabel = ['', 'Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
-const strengthColor = ['', 'bg-red-500', 'bg-orange-400', 'bg-yellow-400', 'bg-blue-400', 'bg-green-500'];
+const strengthColor = ['', '#dc2626', '#ea580c', '#d97706', '#2563eb', '#16a34a'];
 
 const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -130,189 +130,210 @@ const AuthPage: React.FC = () => {
     }
   };
 
-  const inputClass = (error?: string) =>
-    `rounded-full border px-4 py-3 focus:outline-none focus:ring-2 w-full ${
-      error
-        ? 'border-red-500 focus:ring-red-400'
-        : 'focus:ring-orange-400'
-    }`;
-
   const strength = getStrength(signupData.password);
 
   return (
-    <div className="auth-flip-bg min-h-screen flex items-center justify-center">
+    <div className="auth-flip-bg">
       <div className={`auth-flip-container ${isLogin ? '' : 'flipped'}`}>
 
         {/* ── Front: Login ── */}
         <div className="auth-flip-side auth-flip-front">
-          <div className="flex w-full h-full rounded-3xl overflow-hidden shadow-2xl">
+          <div style={{ display: 'flex', width: '100%', height: '100%', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.08)' }}>
 
             {/* Left: Form */}
-            <div className="flex flex-col justify-center items-center w-full md:w-1/2 bg-white rounded-l-3xl md:rounded-r-none shadow-lg z-10">
-              <div className="w-full max-w-md p-8">
-                <span className="text-6xl font-black bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent block mb-6">Circle</span>
-                <h2 className="text-3xl font-bold mb-6 text-gray-800">Sign In</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '50%', background: '#fff', padding: '48px' }}>
+              <div style={{ width: '100%', maxWidth: '360px' }}>
+                <span style={{ fontSize: '32px', fontWeight: 900, color: '#1c1917', letterSpacing: '-0.04em', display: 'block', marginBottom: '8px' }}>Circle</span>
+                <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1c1917', marginBottom: '4px', letterSpacing: '-0.02em' }}>Welcome back</h2>
+                <p style={{ fontSize: '14px', color: '#78716c', marginBottom: '32px' }}>Sign in to continue to your account</p>
 
-                <form className="flex flex-col gap-4" onSubmit={handleLoginSubmit} noValidate>
-                  {/* Identifier */}
+                <form onSubmit={handleLoginSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#44403c', marginBottom: '6px' }}>Email or Username</label>
                     <input
                       type="text"
-                      placeholder="Email or Username"
-                      className={inputClass(loginErrors.identifier)}
+                      placeholder="you@example.com"
+                      className={`auth-input ${loginErrors.identifier ? 'error' : ''}`}
                       value={loginData.identifier}
                       onChange={e => setLoginData({ ...loginData, identifier: e.target.value })}
                     />
                     {loginErrors.identifier && (
-                      <p className="text-red-500 text-xs mt-1 ml-3">{loginErrors.identifier}</p>
+                      <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{loginErrors.identifier}</p>
                     )}
                   </div>
 
-                  {/* Password */}
                   <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#44403c', marginBottom: '6px' }}>Password</label>
                     <input
                       type="password"
-                      placeholder="Password"
-                      className={inputClass(loginErrors.password)}
+                      placeholder="Enter your password"
+                      className={`auth-input ${loginErrors.password ? 'error' : ''}`}
                       value={loginData.password}
                       onChange={e => setLoginData({ ...loginData, password: e.target.value })}
                     />
                     {loginErrors.password && (
-                      <p className="text-red-500 text-xs mt-1 ml-3">{loginErrors.password}</p>
+                      <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{loginErrors.password}</p>
                     )}
                   </div>
 
-                  <a href="#" className="text-xs text-orange-500 hover:underline self-end">
-                    Forgot password?
-                  </a>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <a href="#" style={{ fontSize: '13px', color: '#e85d04', textDecoration: 'none', fontWeight: 500 }}>
+                      Forgot password?
+                    </a>
+                  </div>
 
-                  <button
-                    type="submit"
-                    className="mt-2 bg-gradient-to-r from-orange-400 to-red-500 text-white py-3 rounded-full font-semibold text-lg shadow hover:from-orange-500 hover:to-red-600 transition disabled:opacity-60"
-                    disabled={loginLoading}
-                  >
-                    {loginLoading ? 'Signing In...' : 'Sign In'}
+                  <button type="submit" className="auth-btn-primary" disabled={loginLoading}>
+                    {loginLoading ? 'Signing in...' : 'Sign in'}
                   </button>
+
                   {loginStatus && (
-                    <div className={`mt-2 text-center text-sm ${loginStatus.startsWith('Error') ? 'text-red-500' : 'text-green-600'}`}>{loginStatus}</div>
+                    <div style={{ textAlign: 'center', fontSize: '13px', color: loginStatus.startsWith('Error') ? '#dc2626' : '#16a34a' }}>
+                      {loginStatus}
+                    </div>
                   )}
                 </form>
 
-                <div className="mt-8 text-xs text-gray-400 text-center">© 2026 circle.co.india</div>
-                <div className="mt-6 text-center">
-                  <span className="text-gray-500">Don't have an account? </span>
+                <div style={{ marginTop: '32px', textAlign: 'center', fontSize: '13px', color: '#78716c' }}>
+                  Don't have an account?{' '}
                   <button
-                    className="text-orange-500 hover:underline font-semibold"
                     onClick={() => setIsLogin(false)}
+                    style={{ color: '#e85d04', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}
                   >
-                    Sign Up
+                    Sign up
                   </button>
                 </div>
+
+                <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '11px', color: '#a8a29e' }}>© 2026 circle.co.india</div>
               </div>
             </div>
 
             {/* Right: Branding */}
-            <div className="hidden md:flex flex-col justify-center items-center w-1/2 bg-gradient-to-br from-neutral-900 to-neutral-700 rounded-r-3xl relative overflow-hidden">
-              <div className="z-10 text-white text-left px-12">
-                <h1 className="text-5xl font-bold mb-4">Welcome back to Circle..!!</h1>
-                <p className="mb-8 text-lg opacity-80">
-                  Connections with the students of same mind made easy.
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '50%', background: '#1c1917', position: 'relative', overflow: 'hidden' }}>
+              {/* Subtle decorative circles */}
+              <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '200px', height: '200px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.06)' }} />
+              <div style={{ position: 'absolute', bottom: '-40px', left: '-40px', width: '160px', height: '160px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)' }} />
+
+              <div style={{ position: 'relative', zIndex: 1, padding: '48px', maxWidth: '400px' }}>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: '#e85d04', letterSpacing: '0.15em', textTransform: 'uppercase', display: 'block', marginBottom: '16px' }}>Welcome back</span>
+                <h1 style={{ fontSize: '36px', fontWeight: 800, color: '#fff', lineHeight: 1.2, letterSpacing: '-0.03em', marginBottom: '16px' }}>
+                  Your circle<br />awaits you.
+                </h1>
+                <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
+                  Connect with students who share your mindset, interests and ambitions.
                 </p>
-                <div className="flex justify-center">
-                  <div className="w-60 h-96 bg-neutral-800 rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-neutral-400">[App Image]</span>
+
+                <div className="auth-float" style={{ marginTop: '48px', display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ width: '120px', height: '120px', borderRadius: '50%', border: '2px solid rgba(232,93,4,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', border: '2px solid rgba(232,93,4,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#e85d04' }} />
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="absolute bottom-4 right-8 text-neutral-500 text-xs">Contact Us</div>
+
+              <div style={{ position: 'absolute', bottom: '24px', right: '32px', fontSize: '11px', color: 'rgba(255,255,255,0.25)' }}>Contact Us</div>
             </div>
           </div>
         </div>
 
         {/* ── Back: Signup ── */}
         <div className="auth-flip-side auth-flip-back">
-          <div className="flex w-full h-full rounded-3xl overflow-hidden shadow-2xl flex-row-reverse">
+          <div style={{ display: 'flex', width: '100%', height: '100%', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.08)', flexDirection: 'row-reverse' }}>
 
             {/* Right: Branding (flipped) */}
-            <div className="hidden md:flex flex-col justify-center items-center w-1/2 bg-gradient-to-br from-neutral-900 to-neutral-700 rounded-l-3xl relative overflow-hidden order-2">
-              <div className="z-10 text-white text-left px-12">
-                <h1 className="text-5xl font-bold mb-4">Welcome to Circle..!!</h1>
-                <p className="mb-8 text-lg opacity-80">
-                  Create your account on <b>Circle</b> to connect with other's having same mindset, interest and ambitions
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '50%', background: '#1c1917', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: '-60px', left: '-60px', width: '200px', height: '200px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.06)' }} />
+              <div style={{ position: 'absolute', bottom: '-40px', right: '-40px', width: '160px', height: '160px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)' }} />
+
+              <div style={{ position: 'relative', zIndex: 1, padding: '48px', maxWidth: '400px' }}>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: '#e85d04', letterSpacing: '0.15em', textTransform: 'uppercase', display: 'block', marginBottom: '16px' }}>Get started</span>
+                <h1 style={{ fontSize: '36px', fontWeight: 800, color: '#fff', lineHeight: 1.2, letterSpacing: '-0.03em', marginBottom: '16px' }}>
+                  Build your<br />circle today.
+                </h1>
+                <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
+                  Create your account to connect with others who share your mindset and ambitions.
                 </p>
-                <div className="flex justify-center">
-                  <div className="w-60 h-96 bg-neutral-800 rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-neutral-400">[App Image]</span>
+
+                <div className="auth-float" style={{ marginTop: '48px', display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ width: '120px', height: '120px', borderRadius: '50%', border: '2px solid rgba(232,93,4,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', border: '2px solid rgba(232,93,4,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#e85d04' }} />
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="absolute bottom-4 left-8 text-neutral-500 text-xs">Contact Us</div>
+
+              <div style={{ position: 'absolute', bottom: '24px', left: '32px', fontSize: '11px', color: 'rgba(255,255,255,0.25)' }}>Contact Us</div>
             </div>
 
             {/* Left: Signup Form */}
-            <div className="flex flex-col justify-center items-center w-full md:w-1/2 bg-white rounded-r-3xl md:rounded-l-none shadow-lg z-10 order-1">
-              <div className="w-full max-w-md p-8">
-                <span className="text-6xl font-black bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent block mb-6">Circle</span>
-                <h2 className="text-3xl font-bold mb-6 text-gray-800">Sign Up</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '50%', background: '#fff', padding: '48px' }}>
+              <div style={{ width: '100%', maxWidth: '360px' }}>
+                <span style={{ fontSize: '32px', fontWeight: 900, color: '#1c1917', letterSpacing: '-0.04em', display: 'block', marginBottom: '8px' }}>Circle</span>
+                <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1c1917', marginBottom: '4px', letterSpacing: '-0.02em' }}>Create account</h2>
+                <p style={{ fontSize: '14px', color: '#78716c', marginBottom: '32px' }}>Start building your professional circle</p>
 
-                <form className="flex flex-col gap-4" onSubmit={handleSignupSubmit} noValidate>
-                  {/* Username */}
+                <form onSubmit={handleSignupSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#44403c', marginBottom: '6px' }}>Username</label>
                     <input
                       type="text"
-                      placeholder="Username"
-                      className={inputClass(signupErrors.username)}
+                      placeholder="Choose a username"
+                      className={`auth-input ${signupErrors.username ? 'error' : ''}`}
                       value={signupData.username}
                       onChange={e => setSignupData({ ...signupData, username: e.target.value })}
                     />
                     {signupErrors.username && (
-                      <p className="text-red-500 text-xs mt-1 ml-3">{signupErrors.username}</p>
+                      <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{signupErrors.username}</p>
                     )}
                   </div>
 
-                  {/* Email */}
                   <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#44403c', marginBottom: '6px' }}>Email</label>
                     <input
                       type="email"
-                      placeholder="Email"
-                      className={inputClass(signupErrors.email)}
+                      placeholder="you@example.com"
+                      className={`auth-input ${signupErrors.email ? 'error' : ''}`}
                       value={signupData.email}
                       onChange={e => setSignupData({ ...signupData, email: e.target.value })}
                     />
                     {signupErrors.email && (
-                      <p className="text-red-500 text-xs mt-1 ml-3">{signupErrors.email}</p>
+                      <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{signupErrors.email}</p>
                     )}
                   </div>
 
-                  {/* Password */}
                   <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#44403c', marginBottom: '6px' }}>Password</label>
                     <input
                       type="password"
-                      placeholder="Password"
-                      className={inputClass(signupErrors.password)}
+                      placeholder="Create a strong password"
+                      className={`auth-input ${signupErrors.password ? 'error' : ''}`}
                       value={signupData.password}
                       onChange={e => setSignupData({ ...signupData, password: e.target.value })}
                     />
                     {signupErrors.password && (
-                      <p className="text-red-500 text-xs mt-1 ml-3">{signupErrors.password}</p>
+                      <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{signupErrors.password}</p>
                     )}
 
                     {/* Strength meter */}
                     {signupData.password && (
-                      <div className="mt-2 ml-3">
-                        <div className="flex gap-1 mb-1">
+                      <div style={{ marginTop: '10px' }}>
+                        <div style={{ display: 'flex', gap: '3px', marginBottom: '6px' }}>
                           {[1, 2, 3, 4, 5].map(i => (
                             <div
                               key={i}
-                              className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                                i <= strength ? strengthColor[strength] : 'bg-gray-200'
-                              }`}
+                              style={{
+                                height: '3px',
+                                flex: 1,
+                                borderRadius: '2px',
+                                background: i <= strength ? strengthColor[strength] : '#e7e5e4',
+                                transition: 'background 0.3s ease',
+                              }}
                             />
                           ))}
                         </div>
-                        <p className="text-xs text-gray-400">{strengthLabel[strength]}</p>
-                        {/* Checklist */}
-                        <ul className="mt-1 text-xs space-y-0.5">
+                        <p style={{ fontSize: '11px', color: '#a8a29e', marginBottom: '6px' }}>{strengthLabel[strength]}</p>
+                        <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
                           {[
                             [/.{8,}/, 'At least 8 characters'],
                             [/[A-Z]/, 'One uppercase letter'],
@@ -322,11 +343,14 @@ const AuthPage: React.FC = () => {
                           ].map(([regex, label]) => (
                             <li
                               key={label as string}
-                              className={`flex items-center gap-1 ${
-                                (regex as RegExp).test(signupData.password)
-                                  ? 'text-green-500'
-                                  : 'text-gray-400'
-                              }`}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                fontSize: '11px',
+                                color: (regex as RegExp).test(signupData.password) ? '#16a34a' : '#a8a29e',
+                                transition: 'color 0.2s ease',
+                              }}
                             >
                               <span>{(regex as RegExp).test(signupData.password) ? '✓' : '○'}</span>
                               {label as string}
@@ -337,31 +361,30 @@ const AuthPage: React.FC = () => {
                     )}
                   </div>
 
-                  <button
-                    type="submit"
-                    className="mt-2 bg-gradient-to-r from-orange-400 to-red-500 text-white py-3 rounded-full font-semibold text-lg shadow hover:from-orange-500 hover:to-red-600 transition disabled:opacity-60"
-                    disabled={signupLoading}
-                  >
-                    {signupLoading ? 'Signing Up...' : 'Sign Up'}
+                  <button type="submit" className="auth-btn-primary" disabled={signupLoading}>
+                    {signupLoading ? 'Creating account...' : 'Create account'}
                   </button>
+
                   {signupStatus && (
-                    <div className={`mt-2 text-center text-sm ${signupStatus.startsWith('Error') ? 'text-red-500' : 'text-green-600'}`}>{signupStatus}</div>
+                    <div style={{ textAlign: 'center', fontSize: '13px', color: signupStatus.startsWith('Error') ? '#dc2626' : '#16a34a' }}>
+                      {signupStatus}
+                    </div>
                   )}
                 </form>
 
-                <div className="mt-8 text-xs text-gray-400 text-center">© 2026 circle.co.india</div>
-                <div className="mt-6 text-center">
-                  <span className="text-gray-500">Already have an account? </span>
+                <div style={{ marginTop: '32px', textAlign: 'center', fontSize: '13px', color: '#78716c' }}>
+                  Already have an account?{' '}
                   <button
-                    className="text-orange-500 hover:underline font-semibold"
                     onClick={() => setIsLogin(true)}
+                    style={{ color: '#e85d04', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}
                   >
-                    Sign In
+                    Sign in
                   </button>
                 </div>
+
+                <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '11px', color: '#a8a29e' }}>© 2026 circle.co.india</div>
               </div>
             </div>
-
           </div>
         </div>
 

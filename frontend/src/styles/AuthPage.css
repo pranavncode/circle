@@ -1,15 +1,22 @@
 .auth-flip-bg {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: #fafaf9;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 .auth-flip-container {
   width: 100vw;
-  max-width: 1100px;
-  height: 90vh;
+  max-width: 1000px;
+  height: 88vh;
+  max-height: 680px;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .auth-flip-side {
   width: 100%;
   height: 100%;
@@ -18,8 +25,11 @@
   left: 0;
   display: flex;
   align-items: stretch;
-  transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              filter 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .auth-flip-front {
   z-index: 2;
   opacity: 1;
@@ -27,24 +37,98 @@
   transform: translateY(0px) scale(1);
   pointer-events: auto;
 }
+
 .auth-flip-back {
   z-index: 1;
   opacity: 0;
-  filter: blur(6px);
-  transform: translateY(12px) scale(0.98);
+  filter: blur(4px);
+  transform: translateY(10px) scale(0.985);
   pointer-events: none;
 }
+
 .auth-flip-container.flipped .auth-flip-front {
   z-index: 1;
   opacity: 0;
-  filter: blur(6px);
-  transform: translateY(-12px) scale(0.98);
+  filter: blur(4px);
+  transform: translateY(-10px) scale(0.985);
   pointer-events: none;
 }
+
 .auth-flip-container.flipped .auth-flip-back {
   z-index: 2;
   opacity: 1;
   filter: blur(0px);
   transform: translateY(0px) scale(1);
   pointer-events: auto;
+}
+
+/* Subtle floating animation on the branding side */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.auth-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Input focus glow */
+.auth-input {
+  border: 1.5px solid #e7e5e4;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 14px;
+  width: 100%;
+  background: #fafaf9;
+  color: #1c1917;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.auth-input::placeholder {
+  color: #a8a29e;
+}
+
+.auth-input:focus {
+  border-color: #e85d04;
+  box-shadow: 0 0 0 3px rgba(232, 93, 4, 0.08);
+  background: #fff;
+}
+
+.auth-input.error {
+  border-color: #dc2626;
+}
+
+.auth-input.error:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+}
+
+/* Primary button */
+.auth-btn-primary {
+  background: #1c1917;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  transition: background 0.2s ease, transform 0.1s ease;
+  letter-spacing: -0.01em;
+}
+
+.auth-btn-primary:hover {
+  background: #292524;
+}
+
+.auth-btn-primary:active {
+  transform: scale(0.985);
+}
+
+.auth-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
