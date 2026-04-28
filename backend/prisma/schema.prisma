@@ -19,6 +19,18 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
   posts      Post[]
+
+  // Follow relations
+  followers          Follow[]       @relation("following")
+  following          Follow[]       @relation("followers")
+
+  // Message relations
+  sentMessages       Message[]      @relation("sentMessages")
+  receivedMessages   Message[]      @relation("receivedMessages")
+
+  // Notification relations
+  notifications      Notification[] @relation("notifications")
+  actorNotifications Notification[] @relation("actorNotifications")
 }
 
 model Post {
@@ -29,4 +41,38 @@ model Post {
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
+}
+
+model Follow {
+  id          Int      @id @default(autoincrement())
+  follower    User     @relation("followers", fields: [followerId], references: [id])
+  followerId  Int
+  following   User     @relation("following", fields: [followingId], references: [id])
+  followingId Int
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  content    String   @db.Text
+  read       Boolean  @default(false)
+  sender     User     @relation("sentMessages", fields: [senderId], references: [id])
+  senderId   Int
+  receiver   User     @relation("receivedMessages", fields: [receiverId], references: [id])
+  receiverId Int
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  type      String
+  content   String
+  read      Boolean  @default(false)
+  user      User     @relation("notifications", fields: [userId], references: [id])
+  userId    Int
+  actor     User     @relation("actorNotifications", fields: [actorId], references: [id])
+  actorId   Int
+  createdAt DateTime @default(now())
 }

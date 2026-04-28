@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import type { UserData, Post } from '../shared/types';
+import type { UserData, Post, FollowUser } from '../shared/types';
+import { useSocket } from '../shared/SocketContext';
 
 interface ProfilePageProps {
   userData: UserData;
   onLogout: () => void;
   onProfileUpdated: (user: UserData) => void;
+  onViewProfile: (username: string) => void;
 }
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ userData, onLogout, onProfileUpdated }) => {
+const ProfilePage: React.FC<ProfilePageProps> = ({ userData, onLogout, onProfileUpdated, onViewProfile }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [posts, setPosts] = useState<Post[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [followersList, setFollowersList] = useState<FollowUser[]>([]);
+  const [followingList, setFollowingList] = useState<FollowUser[]>([]);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
   const [formValues, setFormValues] = useState({
     username: userData.username,
     about: userData.about || '',
@@ -46,9 +54,65 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userData, onLogout, onProfile
     }
   };
 
+  const fetchCounts = async () => {
+    try {
+      const res = await axios.get<{ followers: number; following: number }>(
+        `http://localhost:5000/api/follow/counts/${encodeURIComponent(userData.username)}`
+      );
+      setFollowersCount(res.data.followers);
+      setFollowingCount(res.data.following);
+    } catch {
+      // silently fail
+    }
+  };
+
+  const fetchFollowersList = async () => {
+    try {
+      const res = await axios.get<FollowUser[]>(
+        `http://localhost:5000/api/follow/followers/${encodeURIComponent(userData.username)}`
+      );
+      setFollowersList(res.data);
+      setShowFollowers(true);
+      setShowFollowing(false);
+    } catch {
+      // silently fail
+    }
+  };
+
+  const fetchFollowingList = async () => {
+    try {
+      const res = await axios.get<FollowUser[]>(
+        `http://localhost:5000/api/follow/following/${encodeURIComponent(userData.username)}`
+      );
+      setFollowingList(res.data);
+      setShowFollowing(true);
+      setShowFollowers(false);
+    } catch {
+      // silently fail
+    }
+  };
+
   useEffect(() => {
     fetchPosts();
+    fetchCounts();
   }, [userData.username]);
+
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+    const handleUpdate = () => {
+      fetchCounts();
+      // If viewing lists, refetch them
+      if (showFollowers) fetchFollowersList();
+      if (showFollowing) fetchFollowingList();
+    };
+
+    socket.on('new_notification', handleUpdate);
+    return () => {
+      socket.off('new_notification', handleUpdate);
+    };
+  }, [socket, showFollowers, showFollowing]);
 
   const handleInputChange = (field: keyof typeof formValues, value: string) => {
     setFormValues((current) => ({ ...current, [field]: value }));
@@ -368,17 +432,91 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userData, onLogout, onProfile
       <div style={{ ...cardStyle, padding: '24px' }}>
         <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917', marginBottom: '16px' }}>Network</h2>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ fontSize: '24px', fontWeight: 700, color: '#1c1917' }}>0</p>
+          <div
+            style={{ textAlign: 'center', cursor: 'pointer', padding: '12px', borderRadius: '12px', transition: 'background 0.2s' }}
+            onClick={fetchFollowersList}
+          >
+            <p style={{ fontSize: '24px', fontWeight: 700, color: '#1c1917' }}>{followersCount}</p>
             <p style={{ fontSize: '13px', color: '#78716c' }}>Followers</p>
-            <p style={{ fontSize: '11px', color: '#a8a29e', marginTop: '2px' }}>Coming soon</p>
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ fontSize: '24px', fontWeight: 700, color: '#1c1917' }}>0</p>
+          <div
+            style={{ textAlign: 'center', cursor: 'pointer', padding: '12px', borderRadius: '12px', transition: 'background 0.2s' }}
+            onClick={fetchFollowingList}
+          >
+            <p style={{ fontSize: '24px', fontWeight: 700, color: '#1c1917' }}>{followingCount}</p>
             <p style={{ fontSize: '13px', color: '#78716c' }}>Following</p>
-            <p style={{ fontSize: '11px', color: '#a8a29e', marginTop: '2px' }}>Coming soon</p>
           </div>
         </div>
+
+        {/* Followers list */}
+        {showFollowers && (
+          <div style={{ marginTop: '16px', borderTop: '1px solid #e7e5e4', paddingTop: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#1c1917' }}>Followers</h3>
+              <button onClick={() => setShowFollowers(false)} style={{ ...btnOutline, padding: '4px 12px', fontSize: '11px' }}>Close</button>
+            </div>
+            {followersList.length === 0 ? (
+              <p style={{ fontSize: '13px', color: '#a8a29e' }}>No followers yet.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {followersList.map((u) => (
+                  <div
+                    key={u.id}
+                    onClick={() => onViewProfile(u.username)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px',
+                      borderRadius: '10px', border: '1px solid #e7e5e4', cursor: 'pointer',
+                      transition: 'background 0.15s'
+                    }}
+                  >
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1c1917', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '13px', fontWeight: 700, flexShrink: 0 }}>
+                      {u.username.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p style={{ fontSize: '13px', fontWeight: 600, color: '#1c1917' }}>{u.username}</p>
+                      {u.about && <p style={{ fontSize: '11px', color: '#a8a29e' }}>{u.about}</p>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Following list */}
+        {showFollowing && (
+          <div style={{ marginTop: '16px', borderTop: '1px solid #e7e5e4', paddingTop: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#1c1917' }}>Following</h3>
+              <button onClick={() => setShowFollowing(false)} style={{ ...btnOutline, padding: '4px 12px', fontSize: '11px' }}>Close</button>
+            </div>
+            {followingList.length === 0 ? (
+              <p style={{ fontSize: '13px', color: '#a8a29e' }}>Not following anyone yet.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {followingList.map((u) => (
+                  <div
+                    key={u.id}
+                    onClick={() => onViewProfile(u.username)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px',
+                      borderRadius: '10px', border: '1px solid #e7e5e4', cursor: 'pointer',
+                      transition: 'background 0.15s'
+                    }}
+                  >
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1c1917', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '13px', fontWeight: 700, flexShrink: 0 }}>
+                      {u.username.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p style={{ fontSize: '13px', fontWeight: 600, color: '#1c1917' }}>{u.username}</p>
+                      {u.about && <p style={{ fontSize: '11px', color: '#a8a29e' }}>{u.about}</p>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

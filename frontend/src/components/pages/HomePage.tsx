@@ -4,9 +4,11 @@ import type { Post, UserData } from '../shared/types';
 
 interface HomePageProps {
   userData: UserData;
+  showCreatePost: boolean;
+  onCloseCreatePost: () => void;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ userData }) => {
+const HomePage: React.FC<HomePageProps> = ({ userData, showCreatePost, onCloseCreatePost }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [title, setTitle] = useState('');
   const [caption, setCaption] = useState('');
@@ -25,12 +27,12 @@ const HomePage: React.FC<HomePageProps> = ({ userData }) => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.get<Post[]>(`http://localhost:5000/api/posts`, {
+      const response = await axios.get<Post[]>(`http://localhost:5000/api/posts/feed`, {
         params: { username: userData.username },
       });
       setPosts(response.data);
     } catch (err) {
-      setError('Unable to load your posts.');
+      setError('Unable to load your feed.');
     } finally {
       setLoading(false);
     }
@@ -219,7 +221,7 @@ const HomePage: React.FC<HomePageProps> = ({ userData }) => {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
           <div>
             <p style={{ fontSize: '11px', fontWeight: 600, color: '#a8a29e', letterSpacing: '0.16em', textTransform: 'uppercase' }}>Feed</p>
-            <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#1c1917', letterSpacing: '-0.02em', marginTop: '2px' }}>Your posts</h2>
+            <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#1c1917', letterSpacing: '-0.02em', marginTop: '2px' }}>Your feed</h2>
           </div>
           <button onClick={fetchPosts} style={{ ...btnOutline, padding: '8px 16px', fontSize: '12px' }}>Refresh</button>
         </div>
@@ -255,44 +257,49 @@ const HomePage: React.FC<HomePageProps> = ({ userData }) => {
         </div>
       </div>
 
-      {/* Create post */}
-      <div style={{ ...cardStyle, padding: '24px' }}>
-        <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917', marginBottom: '16px', letterSpacing: '-0.01em' }}>New post</h3>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          <div>
-            <label style={labelStyle}>Title</label>
-            <input
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              style={inputStyle}
-              placeholder="What are you working on?"
-            />
+      {/* Create post (shown via header button) */}
+      {showCreatePost && (
+        <div style={{ ...cardStyle, padding: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917', letterSpacing: '-0.01em' }}>New post</h3>
+            <button onClick={onCloseCreatePost} style={{ ...btnOutline, padding: '6px 14px', fontSize: '12px' }}>Cancel</button>
           </div>
-          <div>
-            <label style={labelStyle}>Caption</label>
-            <textarea
-              value={caption}
-              onChange={(event) => setCaption(event.target.value)}
-              style={{ ...inputStyle, resize: 'vertical', minHeight: '80px' }}
-              rows={3}
-              placeholder="Share your progress, ideas or updates"
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>Photo</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} style={{ fontSize: '13px', color: '#78716c' }} />
-            {imagePreview && (
-              <img src={imagePreview} alt="Preview" style={{ marginTop: '12px', maxHeight: '180px', width: '100%', objectFit: 'cover', borderRadius: '12px' }} />
-            )}
-          </div>
-          {error && <p style={{ fontSize: '13px', color: '#dc2626' }}>{error}</p>}
-          <div>
-            <button type="submit" disabled={saving} style={{ ...btnPrimary, opacity: saving ? 0.5 : 1 }}>
-              {saving ? 'Publishing...' : 'Publish'}
-            </button>
-          </div>
-        </form>
-      </div>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div>
+              <label style={labelStyle}>Title</label>
+              <input
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                style={inputStyle}
+                placeholder="What are you working on?"
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Caption</label>
+              <textarea
+                value={caption}
+                onChange={(event) => setCaption(event.target.value)}
+                style={{ ...inputStyle, resize: 'vertical', minHeight: '80px' }}
+                rows={3}
+                placeholder="Share your progress, ideas or updates"
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Photo</label>
+              <input type="file" accept="image/*" onChange={handleImageChange} style={{ fontSize: '13px', color: '#78716c' }} />
+              {imagePreview && (
+                <img src={imagePreview} alt="Preview" style={{ marginTop: '12px', maxHeight: '180px', width: '100%', objectFit: 'cover', borderRadius: '12px' }} />
+              )}
+            </div>
+            {error && <p style={{ fontSize: '13px', color: '#dc2626' }}>{error}</p>}
+            <div>
+              <button type="submit" disabled={saving} style={{ ...btnPrimary, opacity: saving ? 0.5 : 1 }}>
+                {saving ? 'Publishing...' : 'Publish'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Posts feed */}
       {loading ? (
@@ -305,6 +312,7 @@ const HomePage: React.FC<HomePageProps> = ({ userData }) => {
       ) : (
         posts.map((post) => {
           const author = post.user?.username ?? userData.username;
+          const isOwnPost = author === userData.username;
           const isEditing = editingPostId === post.id;
 
           return (
@@ -331,10 +339,12 @@ const HomePage: React.FC<HomePageProps> = ({ userData }) => {
                       <p style={{ fontSize: '11px', color: '#a8a29e' }}>{new Date(post.createdAt).toLocaleString()}</p>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => startEdit(post)} style={{ ...btnOutline, padding: '6px 14px', fontSize: '12px' }}>Edit</button>
-                    <button onClick={() => handleDelete(post.id)} style={{ ...btnOutline, padding: '6px 14px', fontSize: '12px', color: '#dc2626', borderColor: '#fecaca' }}>Delete</button>
-                  </div>
+                  {isOwnPost && (
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={() => startEdit(post)} style={{ ...btnOutline, padding: '6px 14px', fontSize: '12px' }}>Edit</button>
+                      <button onClick={() => handleDelete(post.id)} style={{ ...btnOutline, padding: '6px 14px', fontSize: '12px', color: '#dc2626', borderColor: '#fecaca' }}>Delete</button>
+                    </div>
+                  )}
                 </div>
 
                 {isEditing ? (

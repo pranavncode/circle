@@ -20,6 +20,44 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// Feed: posts from self + followed users
+router.get('/feed', async (req, res) => {
+  const username = String(req.query.username || '');
+  if (!username) {
+    return res.status(400).json({ error: 'username query parameter is required' });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username },
+      select: { id: true },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Get IDs of users this person follows
+    const following = await prisma.follow.findMany({
+      where: { followerId: user.id },
+      select: { followingId: true },
+    });
+
+    const feedUserIds = [user.id, ...following.map((f) => f.followingId)];
+
+    const posts = await prisma.post.findMany({
+      where: { userId: { in: feedUserIds } },
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { username: true } } },
+    });
+
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get posts for a specific user
 router.get('/', async (req, res) => {
   const username = String(req.query.username || '');
   if (!username) {
